@@ -12,6 +12,19 @@ O app está disponível em: [pagespeed-insights-app.vercel.app](https://pagespee
 - Gráficos interativos
 - Interface responsiva e moderna (Material UI)
 - Feedback visual de carregamento e erros
+- **Relatório detalhado dos problemas encontrados**
+- **Download do relatório em JSON**
+
+## 📝 Relatório Detalhado dos Problemas
+
+Após analisar as URLs, você pode:
+- **Visualizar um relatório detalhado** com todos os problemas encontrados pelo PageSpeed Insights (performance, acessibilidade, SEO, melhores práticas, etc.)
+- **Baixar o relatório completo em JSON** para consulta ou auditoria
+
+Cada problema inclui:
+- Título e descrição
+- Impacto estimado (ex: economia de bytes ou milissegundos)
+- Categoria
 
 ## 🚀 Tecnologias Utilizadas
 - [React](https://react.dev/) + [Vite](https://vitejs.dev/)
