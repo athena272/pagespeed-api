@@ -19,10 +19,47 @@ import InsightsIcon from '@mui/icons-material/Insights';
 
 type Status = 'idle' | 'loading' | 'success' | 'error';
 
+interface PageSpeedAudit {
+  id: string;
+  title: string;
+  description: string;
+  score: number | null;
+  scoreDisplayMode?: string;
+  displayValue?: string;
+  metricSavings?: {
+    LCP?: number;
+    FCP?: number;
+  };
+  overallSavingsBytes?: number;
+  overallSavingsMs?: number;
+}
+
+interface PageSpeedResponse {
+  lighthouseResult?: {
+    audits?: Record<string, PageSpeedAudit>;
+    categories?: Record<string, { score: number }>;
+  };
+}
+
 interface Result {
   url: string;
   score: number;
   status: Status;
+  details?: PageSpeedResponse; // Dados completos da API
+  problems?: Problem[];
+}
+
+interface Problem {
+  id: string;
+  title: string;
+  description: string;
+  score: number;
+  category: string;
+  impact?: string;
+  savings?: {
+    bytes?: number;
+    ms?: number;
+  };
 }
 
 export default function App() {
@@ -30,6 +67,32 @@ export default function App() {
   const [selectedMetric, setSelectedMetric] = useState('performance');
   const [results, setResults] = useState<Result[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [showDetailedReport, setShowDetailedReport] = useState(false);
+
+  const extractProblems = (apiResponse: PageSpeedResponse, category: string): Problem[] => {
+    const problems: Problem[] = [];
+    
+    if (apiResponse?.lighthouseResult?.audits) {
+      Object.entries(apiResponse.lighthouseResult.audits).forEach(([id, audit]: [string, PageSpeedAudit]) => {
+        if (audit.score !== null && audit.score < 1) {
+          problems.push({
+            id,
+            title: audit.title,
+            description: audit.description,
+            score: audit.score,
+            category,
+            impact: audit.scoreDisplayMode === 'metricSavings' ? audit.displayValue : undefined,
+            savings: audit.metricSavings ? {
+              bytes: audit.overallSavingsBytes,
+              ms: audit.overallSavingsMs
+            } : undefined
+          });
+        }
+      });
+    }
+    
+    return problems;
+  };
 
   const analyzeUrls = async () => {
     const list = urls
@@ -62,10 +125,14 @@ export default function App() {
           const score =
             json?.lighthouseResult?.categories?.[selectedMetric]?.score ?? 0;
 
+          const problems = extractProblems(json, selectedMetric);
+
           return {
             ...item,
             score: Math.round(score * 100),
-            status: 'success' as Status
+            status: 'success' as Status,
+            details: json,
+            problems
           };
         } catch {
           return { ...item, status: 'error' as Status };
@@ -75,6 +142,26 @@ export default function App() {
 
     setResults(updatedResults);
     setIsAnalyzing(false);
+  };
+
+  const downloadReport = () => {
+    const report = {
+      timestamp: new Date().toISOString(),
+      metric: selectedMetric,
+      results: results.map(r => ({
+        url: r.url,
+        score: r.score,
+        problems: r.problems || []
+      }))
+    };
+    
+    const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `pagespeed-report-${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -88,7 +175,7 @@ export default function App() {
           </Typography>
         </Toolbar>
       </AppBar>
-      <Container maxWidth="md" sx={{ py: 6 }}>
+      <Container maxWidth="lg" sx={{ py: 6 }}>
         <Box mb={4}>
           <TextField
             label="Digite uma ou mais URLs, uma por linha"
@@ -119,6 +206,26 @@ export default function App() {
             >
               {isAnalyzing ? '🔄 Analisando...' : 'Analisar todas'}
             </Button>
+            {results.length > 0 && results.some(r => r.status === 'success') && (
+              <Button
+                onClick={() => setShowDetailedReport(!showDetailedReport)}
+                variant="outlined"
+                color="secondary"
+                size="large"
+              >
+                {showDetailedReport ? 'Ocultar' : 'Ver'} Relatório Detalhado
+              </Button>
+            )}
+            {results.length > 0 && results.some(r => r.status === 'success') && (
+              <Button
+                onClick={downloadReport}
+                variant="outlined"
+                color="success"
+                size="large"
+              >
+                📥 Baixar Relatório
+              </Button>
+            )}
           </Stack>
         </Box>
         <AnimatePresence>
@@ -128,6 +235,51 @@ export default function App() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
+              {showDetailedReport && (
+                <Box mb={4}>
+                  <Typography variant="h6" gutterBottom>
+                    📊 Relatório Detalhado - {selectedMetric}
+                  </Typography>
+                  {results.filter(r => r.status === 'success').map((result) => (
+                    <Paper key={result.url} elevation={2} sx={{ p: 3, mb: 2 }}>
+                      <Typography variant="subtitle1" color="primary" gutterBottom>
+                        🔗 {result.url} - Score: {result.score}/100
+                      </Typography>
+                      {result.problems && result.problems.length > 0 ? (
+                        <Box>
+                          <Typography variant="subtitle2" color="error" gutterBottom>
+                            ❌ {result.problems.length} problema(s) encontrado(s):
+                          </Typography>
+                          {result.problems.map((problem) => (
+                            <Box key={problem.id} sx={{ ml: 2, mb: 2, p: 2, bgcolor: 'grey.50', borderRadius: 1 }}>
+                              <Typography variant="body2" fontWeight="bold" color="error">
+                                {problem.title}
+                              </Typography>
+                              <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                                {problem.description}
+                              </Typography>
+                              {problem.impact && (
+                                <Typography variant="body2" color="warning.main" sx={{ mt: 1 }}>
+                                  💡 Impacto: {problem.impact}
+                                </Typography>
+                              )}
+                              {problem.savings && (
+                                <Typography variant="body2" color="info.main" sx={{ mt: 1 }}>
+                                  📈 Economia potencial: {problem.savings.bytes ? `${Math.round(problem.savings.bytes / 1024)}KB` : ''} {problem.savings.ms ? `${problem.savings.ms}ms` : ''}
+                                </Typography>
+                              )}
+                            </Box>
+                          ))}
+                        </Box>
+                      ) : (
+                        <Typography variant="body2" color="success.main">
+                          ✅ Nenhum problema encontrado nesta categoria!
+                        </Typography>
+                      )}
+                    </Paper>
+                  ))}
+                </Box>
+              )}
               <Box
                 display="grid"
                 gridTemplateColumns={{ xs: '1fr', md: '1fr 1fr' }}
