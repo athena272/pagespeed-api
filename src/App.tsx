@@ -9,7 +9,6 @@ import {
   Typography,
   TextField,
   Button,
-  Grid,
   Paper,
   AppBar,
   Toolbar,
@@ -129,9 +128,13 @@ export default function App() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
-              <Grid container spacing={3}>
+              <Box
+                display="grid"
+                gridTemplateColumns={{ xs: '1fr', md: '1fr 1fr' }}
+                gap={3}
+              >
                 {results.map(({ url, score, status }) => (
-                  <Grid item xs={12} md={6} key={url}>
+                  <Box key={url}>
                     <motion.div layout>
                       <Paper elevation={3} sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                         <Typography variant="subtitle2" color="primary" sx={{ wordBreak: 'break-all', mb: 2, fontWeight: 600 }}>
@@ -152,9 +155,9 @@ export default function App() {
                         )}
                       </Paper>
                     </motion.div>
-                  </Grid>
+                  </Box>
                 ))}
-              </Grid>
+              </Box>
             </motion.div>
           )}
         </AnimatePresence>
