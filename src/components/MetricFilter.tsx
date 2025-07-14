@@ -1,3 +1,5 @@
+import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+
 interface MetricFilterProps {
     selected: string;
     onChange: (metric: string) => void;
@@ -12,19 +14,20 @@ export default function MetricFilter({ selected, onChange }: MetricFilterProps) 
     ];
 
     return (
-        <div className="mb-6">
-            <label className="block mb-2 font-medium text-gray-700">Selecionar métrica:</label>
-            <select
+        <FormControl fullWidth sx={{ maxWidth: 300, mb: 3 }}>
+            <InputLabel id="metric-select-label">Selecionar métrica</InputLabel>
+            <Select
+                labelId="metric-select-label"
                 value={selected}
+                label="Selecionar métrica"
                 onChange={(e) => onChange(e.target.value)}
-                className="p-2 border border-gray-300 rounded w-full max-w-xs"
             >
                 {options.map((o) => (
-                    <option key={o.value} value={o.value}>
+                    <MenuItem key={o.value} value={o.value}>
                         {o.label}
-                    </option>
+                    </MenuItem>
                 ))}
-            </select>
-        </div>
+            </Select>
+        </FormControl>
     );
 }

@@ -1,3 +1,4 @@
+import { Paper, Typography } from '@mui/material';
 import {
     PieChart,
     Pie,
@@ -20,24 +21,28 @@ export default function CategoryPieChart({ label, score }: CategoryPieChartProps
     ];
 
     return (
-        <div className="w-full h-72">
-            <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                    <Pie
-                        data={data}
-                        innerRadius={60}
-                        outerRadius={100}
-                        dataKey="value"
-                        startAngle={90}
-                        endAngle={-270}
-                    >
-                        <Cell fill={COLORS[0]} />
-                        <Cell fill={COLORS[1]} />
-                    </Pie>
-                    <Tooltip />
-                </PieChart>
-            </ResponsiveContainer>
-            <p className="text-center font-semibold mt-2">{label}: {score}</p>
-        </div>
+        <Paper elevation={1} sx={{ p: 2, textAlign: 'center', bgcolor: 'grey.50' }}>
+            <div style={{ width: '100%', height: 220 }}>
+                <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                        <Pie
+                            data={data}
+                            innerRadius={60}
+                            outerRadius={100}
+                            dataKey="value"
+                            startAngle={90}
+                            endAngle={-270}
+                        >
+                            <Cell fill={COLORS[0]} />
+                            <Cell fill={COLORS[1]} />
+                        </Pie>
+                        <Tooltip />
+                    </PieChart>
+                </ResponsiveContainer>
+            </div>
+            <Typography variant="subtitle1" fontWeight={600} mt={2}>
+                {label}: {score}
+            </Typography>
+        </Paper>
     );
 }

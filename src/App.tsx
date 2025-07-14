@@ -3,6 +3,20 @@ import { useState } from 'react';
 import CategoryPieChart from './components/CategoryPieChart';
 import MetricFilter from './components/MetricFilter';
 import { motion, AnimatePresence } from 'framer-motion';
+import {
+  Container,
+  Box,
+  Typography,
+  TextField,
+  Button,
+  Grid,
+  Paper,
+  AppBar,
+  Toolbar,
+  CssBaseline,
+  Stack,
+} from '@mui/material';
+import InsightsIcon from '@mui/icons-material/Insights';
 
 type Status = 'idle' | 'loading' | 'success' | 'error';
 
@@ -65,73 +79,86 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white text-gray-800 p-6">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold mb-6 flex items-center gap-2">
-          <span role="img">📊</span> PageSpeed Insights
-        </h1>
-
-        <textarea
-          className="w-full h-36 p-3 border border-blue-200 rounded mb-4 resize-none shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-          placeholder="Digite uma ou mais URLs, uma por linha"
-          cols={100}
-          rows={16}
-          value={urls}
-          onChange={(e) => setUrls(e.target.value)}
-        />
-
-        <MetricFilter selected={selectedMetric} onChange={setSelectedMetric} />
-
-        <button
-          onClick={analyzeUrls}
-          disabled={isAnalyzing}
-          className={`px-6 py-2 rounded font-semibold transition mb-8 shadow-md ${isAnalyzing
-              ? 'bg-gray-400 cursor-not-allowed text-white'
-              : 'bg-blue-600 text-white hover:bg-blue-700'
-            }`}
-        >
-          {isAnalyzing ? '🔄 Analisando...' : '🚀 Analisar todas'}
-        </button>
-
+    <>
+      <CssBaseline />
+      <AppBar position="static" color="primary" elevation={2}>
+        <Toolbar>
+          <InsightsIcon sx={{ mr: 1 }} fontSize="large" />
+          <Typography variant="h5" component="div" sx={{ flexGrow: 1, fontWeight: 700 }}>
+            PageSpeed Insights
+          </Typography>
+        </Toolbar>
+      </AppBar>
+      <Container maxWidth="md" sx={{ py: 6 }}>
+        <Box mb={4}>
+          <TextField
+            label="Digite uma ou mais URLs, uma por linha"
+            multiline
+            minRows={4}
+            fullWidth
+            value={urls}
+            onChange={(e) => setUrls(e.target.value)}
+            variant="outlined"
+            sx={{ mb: 3 }}
+          />
+          <Stack
+            direction={{ xs: 'column', sm: 'row' }}
+            spacing={2}
+            alignItems="center"
+            justifyContent="flex-start"
+            sx={{ mb: 4 }}
+          >
+            <MetricFilter selected={selectedMetric} onChange={setSelectedMetric} />
+            <Button
+              onClick={analyzeUrls}
+              disabled={isAnalyzing}
+              variant="contained"
+              color="primary"
+              size="large"
+              sx={{ minWidth: 180 }}
+              startIcon={isAnalyzing ? null : <InsightsIcon />}
+            >
+              {isAnalyzing ? '🔄 Analisando...' : 'Analisar todas'}
+            </Button>
+          </Stack>
+        </Box>
         <AnimatePresence>
           {results.length > 0 && (
             <motion.div
-              className="grid md:grid-cols-2 gap-6"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
-              {results.map(({ url, score, status }) => (
-                <motion.div
-                  key={url}
-                  layout
-                  className="bg-white p-4 rounded shadow border border-gray-100 flex flex-col justify-between hover:shadow-lg transition"
-                >
-                  <p className="text-sm text-blue-700 break-all mb-3 font-semibold">
-                    🔗 {url}
-                  </p>
-
-                  {status === 'loading' && (
-                    <div className="text-yellow-600 font-medium text-center animate-pulse">
-                      ⏳ Analisando...
-                    </div>
-                  )}
-
-                  {status === 'error' && (
-                    <div className="text-red-600 font-medium text-center">
-                      ❌ Erro ao processar
-                    </div>
-                  )}
-
-                  {status === 'success' && (
-                    <CategoryPieChart label={selectedMetric} score={score} />
-                  )}
-                </motion.div>
-              ))}
+              <Grid container spacing={3}>
+                {results.map(({ url, score, status }) => (
+                  <Grid item xs={12} md={6} key={url}>
+                    <motion.div layout>
+                      <Paper elevation={3} sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                        <Typography variant="subtitle2" color="primary" sx={{ wordBreak: 'break-all', mb: 2, fontWeight: 600 }}>
+                          🔗 {url}
+                        </Typography>
+                        {status === 'loading' && (
+                          <Typography color="warning.main" align="center" sx={{ fontWeight: 500 }}>
+                            ⏳ Analisando...
+                          </Typography>
+                        )}
+                        {status === 'error' && (
+                          <Typography color="error.main" align="center" sx={{ fontWeight: 500 }}>
+                            ❌ Erro ao processar
+                          </Typography>
+                        )}
+                        {status === 'success' && (
+                          <CategoryPieChart label={selectedMetric} score={score} />
+                        )}
+                      </Paper>
+                    </motion.div>
+                  </Grid>
+                ))}
+              </Grid>
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
-    </div>
+      </Container>
+    </>
   );
 }

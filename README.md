@@ -1,69 +1,68 @@
-# React + TypeScript + Vite
+# PageSpeed Insights App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Uma aplicação web moderna para analisar rapidamente o desempenho, acessibilidade, melhores práticas e SEO de múltiplas URLs usando a API do Google PageSpeed Insights.
 
-Currently, two official plugins are available:
+## ✨ Funcionalidades
+- Análise em lote de múltiplas URLs
+- Visualização de métricas (Desempenho, Acessibilidade, Práticas, SEO)
+- Gráficos interativos
+- Interface responsiva e moderna (Material UI)
+- Feedback visual de carregamento e erros
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Tecnologias Utilizadas
+- [React](https://react.dev/) + [Vite](https://vitejs.dev/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Material UI (MUI)](https://mui.com/)
+- [Framer Motion](https://www.framer.com/motion/) (animações)
+- [Recharts](https://recharts.org/) (gráficos)
 
-## Expanding the ESLint configuration
+## 🛠️ Instalação e Execução
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+1. **Clone o repositório:**
+   ```sh
+   git clone https://github.com/seu-usuario/pagespeed-insights-app.git
+   cd pagespeed-insights-app
+   ```
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+2. **Instale as dependências:**
+   ```sh
+   pnpm install
+   # ou npm install
+   ```
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+3. **Configure a chave da API do Google PageSpeed Insights:**
+   - Crie um arquivo `.env` na raiz do projeto:
+     ```env
+     VITE_PSI_API_KEY=YOUR_GOOGLE_API_KEY
+     ```
+   - Substitua `YOUR_GOOGLE_API_KEY` pela sua chave.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+4. **Execute o projeto em modo desenvolvimento:**
+   ```sh
+   pnpm dev
+   # ou npm run dev
+   ```
+
+5. **Acesse em:**
+   [http://localhost:5173](http://localhost:5173)
+
+## 📦 Build para Produção
+```sh
+pnpm build
+# ou npm run build
 ```
+Os arquivos finais estarão em `dist/`.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🖼️ Preview
+![Preview da interface](./docs/preview.png)
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 💡 Customização
+- O layout usa Material UI e pode ser facilmente customizado em `src/App.tsx` e componentes em `src/components/`.
+- Para trocar temas, consulte a [documentação do MUI](https://mui.com/material-ui/customization/theming/).
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## 📝 Licença
+MIT
+
+---
+
+Feito com ❤️ por [Seu Nome](https://github.com/seu-usuario)
