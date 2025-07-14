@@ -2,6 +2,10 @@
 
 Uma aplicação web moderna para analisar rapidamente o desempenho, acessibilidade, melhores práticas e SEO de múltiplas URLs usando a API do Google PageSpeed Insights.
 
+## 🌐 Acesse Online
+
+O app está disponível em: [pagespeed-insights-app.vercel.app](https://pagespeed-insights-app.vercel.app)
+
 ## ✨ Funcionalidades
 - Análise em lote de múltiplas URLs
 - Visualização de métricas (Desempenho, Acessibilidade, Práticas, SEO)
