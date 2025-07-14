@@ -6,6 +6,11 @@ Uma aplicação web moderna para analisar rapidamente o desempenho, acessibilida
 
 O app está disponível em: [pagespeed-insights-app.vercel.app](https://pagespeed-insights-app.vercel.app)
 
+<img width="1408" height="854" alt="image" src="https://github.com/user-attachments/assets/98421850-23d3-4a03-a673-e1eaa85a401c" />
+
+![Uploading image.png…]()
+
+
 ## ✨ Funcionalidades
 - Análise em lote de múltiplas URLs
 - Visualização de métricas (Desempenho, Acessibilidade, Práticas, SEO)
