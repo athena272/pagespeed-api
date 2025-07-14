@@ -72,5 +72,3 @@ Os arquivos finais estarão em `dist/`.
 MIT
 
 ---
-
-Feito com ❤️ por [Seu Nome](https://github.com/seu-usuario)
