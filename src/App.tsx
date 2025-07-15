@@ -112,36 +112,37 @@ export default function App() {
 
     const key = import.meta.env.VITE_PSI_API_KEY;
 
-    const updatedResults = await Promise.all(
-      initialResults.map(async (item) => {
-        try {
-          const res = await fetch(
-            `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(
-              item.url
-            )}&key=${key}`
-          );
-          const json = await res.json();
-
-          const score =
-            json?.lighthouseResult?.categories?.[selectedMetric]?.score ?? 0;
-
-          const problems = extractProblems(json, selectedMetric);
-
-          return {
-            ...item,
-            score: Math.round(score * 100),
-            status: 'success' as Status,
-            details: json,
-            problems
-          };
-        } catch {
-          return { ...item, status: 'error' as Status };
+    let completed = 0;
+    list.forEach(async (url, idx) => {
+      try {
+        const res = await fetch(
+          `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&key=${key}`
+        );
+        const json = await res.json();
+        const score = json?.lighthouseResult?.categories?.[selectedMetric]?.score ?? 0;
+        const problems = extractProblems(json, selectedMetric);
+        setResults(prev => prev.map((item, i) =>
+          i === idx
+            ? {
+                ...item,
+                score: Math.round(score * 100),
+                status: 'success' as Status,
+                details: json,
+                problems
+              }
+            : item
+        ));
+      } catch {
+        setResults(prev => prev.map((item, i) =>
+          i === idx ? { ...item, status: 'error' as Status } : item
+        ));
+      } finally {
+        completed++;
+        if (completed === list.length) {
+          setIsAnalyzing(false);
         }
-      })
-    );
-
-    setResults(updatedResults);
-    setIsAnalyzing(false);
+      }
+    });
   };
 
   const downloadReport = () => {
