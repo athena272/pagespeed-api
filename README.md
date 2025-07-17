@@ -74,9 +74,6 @@ pnpm build
 ```
 Os arquivos finais estarão em `dist/`.
 
-## 🖼️ Preview
-![Preview da interface](./docs/preview.png)
-
 ## 💡 Customização
 - O layout usa Material UI e pode ser facilmente customizado em `src/App.tsx` e componentes em `src/components/`.
 - Para trocar temas, consulte a [documentação do MUI](https://mui.com/material-ui/customization/theming/).
